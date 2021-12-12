@@ -38,11 +38,13 @@ namespace WiiBrewToolbox
             this.pathLabel = new System.Windows.Forms.Label();
             this.pathComboBox = new System.Windows.Forms.ComboBox();
             this.browseButton = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.argumentsLabel = new System.Windows.Forms.Label();
             this.argumentsTextBox = new System.Windows.Forms.TextBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.loadingIcon = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loadingIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -59,6 +61,7 @@ namespace WiiBrewToolbox
             this.tableLayoutPanel1.Controls.Add(this.browseButton, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.argumentsLabel, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.argumentsTextBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.loadingIcon, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -156,11 +159,6 @@ namespace WiiBrewToolbox
             this.browseButton.UseVisualStyleBackColor = true;
             this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.DefaultExt = "exe";
-            this.openFileDialog1.Filter = "Programs|*.exe|All files|*.*;*";
-            // 
             // argumentsLabel
             // 
             this.argumentsLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -179,6 +177,22 @@ namespace WiiBrewToolbox
             this.argumentsTextBox.Name = "argumentsTextBox";
             this.argumentsTextBox.Size = new System.Drawing.Size(228, 21);
             this.argumentsTextBox.TabIndex = 2;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "exe";
+            this.openFileDialog1.Filter = "Programs|*.exe|All files|*.*;*";
+            // 
+            // loadingIcon
+            // 
+            this.loadingIcon.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.loadingIcon.Image = global::WiiBrewToolbox.Properties.Resources.winload;
+            this.loadingIcon.Location = new System.Drawing.Point(3, 115);
+            this.loadingIcon.Name = "loadingIcon";
+            this.loadingIcon.Size = new System.Drawing.Size(24, 24);
+            this.loadingIcon.TabIndex = 6;
+            this.loadingIcon.TabStop = false;
+            this.loadingIcon.Visible = false;
             // 
             // ItemEditor
             // 
@@ -202,6 +216,7 @@ namespace WiiBrewToolbox
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.loadingIcon)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -220,5 +235,6 @@ namespace WiiBrewToolbox
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label argumentsLabel;
         private System.Windows.Forms.TextBox argumentsTextBox;
+        private System.Windows.Forms.PictureBox loadingIcon;
     }
 }

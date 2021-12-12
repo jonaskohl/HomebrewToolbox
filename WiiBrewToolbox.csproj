@@ -180,6 +180,7 @@
     <None Include="Resources\wininet.png" />
     <None Include="Resources\toolbox.png" />
     <None Include="Resources\wininfo.png" />
+    <None Include="Resources\winload.gif" />
     <Content Include="toolbox.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
