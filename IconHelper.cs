@@ -17,25 +17,31 @@ namespace WiiBrewToolbox
             return IconManager.GetIconLnk(path);
         }
 
-        public static Bitmap GetIcon(string path)
+        public static ImageIconInfo GetIcon(string path)
         {
             var fullPath = path;
             if (PathHelper.IsURL(path))
-                return Properties.Resources.wininet;
+                return new ImageIconInfo() { Image = SkinManager.UrlImage, IsBuiltinImage = true };
 
             if (!PathHelper.ExpandPath(ref fullPath))
-                return null;
+                return new ImageIconInfo() { Image = null, IsBuiltinImage = true };
             var ext = Path.GetExtension(fullPath).ToLower();
             var attr = File.GetAttributes(fullPath);
 
             if (attr.HasFlag(FileAttributes.Directory))
-                return Properties.Resources.folder;
+                return new ImageIconInfo() { Image = SkinManager.FolderImage, IsBuiltinImage = true };
             else if (ext == ".exe")
-                return GetIconFromExe(fullPath);
+            {
+                var img = GetIconFromExe(fullPath);
+                return new ImageIconInfo() { Image = img, IsBuiltinImage = img == null };
+            }
             //else if (ext == ".lnk")
             //    return GetLnkIcon(path);
             else
-                return IconManager.GetIconEx(fullPath);
+            {
+                var img = IconManager.GetIconEx(fullPath);
+                return new ImageIconInfo() { Image = img, IsBuiltinImage = img == null };
+            }
         }
 
         public static Bitmap GetIconFromExe(string path)
@@ -61,18 +67,26 @@ namespace WiiBrewToolbox
             }
         }
 
-        public static Bitmap ResizeTo(Bitmap src, int size = Constants.ICONSIZE)
+        public static Image ResizeTo(Image src, int size = Constants.ICONSIZE)
         {
-            var b = new Bitmap(size, size);
-            using (var g = Graphics.FromImage(b))
+            if (src == null)
+                return null;
+            try
             {
-                if (size > src.Width && size % src.Width == 0)
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                else
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.DrawImage(src, new Rectangle(0, 0, size, size));
+                var b = new Bitmap(size, size);
+                using (var g = Graphics.FromImage(b))
+                {
+                    if (size > src.Width && size % src.Width == 0)
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                    else
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(src, new Rectangle(0, 0, size, size));
+                }
+                return b;
+            } catch (ArgumentException)
+            {
+                return src;
             }
-            return b;
         }
     }
 }

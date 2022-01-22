@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace WiiBrewToolbox
 {
-    public partial class ItemEditor : Form
+    public partial class ItemEditor : SkinnedForm
     {
         public string ItmName => nameTextBox.Text;
         public string ItmPath => pathComboBox.Text;

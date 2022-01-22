@@ -123,10 +123,30 @@ namespace WiiBrewToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap settings {
+            get {
+                object obj = ResourceManager.GetObject("settings", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap toolbox {
             get {
                 object obj = ResourceManager.GetObject("toolbox", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon toolbox1 {
+            get {
+                object obj = ResourceManager.GetObject("toolbox1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -176,6 +196,16 @@ namespace WiiBrewToolbox.Properties {
         internal static System.Drawing.Bitmap winload {
             get {
                 object obj = ResourceManager.GetObject("winload", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wtb_buttons_builtin {
+            get {
+                object obj = ResourceManager.GetObject("wtb_buttons_builtin", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

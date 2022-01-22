@@ -20,6 +20,9 @@ namespace WiiBrewToolbox
         {
             DoubleBuffered = true;
 
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.Opaque, false);
+
             designmode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
             timer = new Timer();
@@ -57,7 +60,6 @@ namespace WiiBrewToolbox
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            e.Graphics.Clear(BackColor);
             if (!designmode && !gotHeight)
                 return;
             TextRenderer.DrawText(e.Graphics, Text, Font, new Rectangle(new Point(0, top), Size), ForeColor, TextFormatFlags.WordBreak);

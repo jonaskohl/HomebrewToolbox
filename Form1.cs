@@ -15,7 +15,7 @@ using System.Xml.Linq;
 
 namespace WiiBrewToolbox
 {
-    public partial class Form1 : Form
+    public partial class Form1 : SkinnedForm
     {
         public event EventHandler<LoadingStateChangedEventArgs> LoadingStageChanged;
 
@@ -31,16 +31,16 @@ namespace WiiBrewToolbox
             var doc = new XDocument(
                 new XElement(
                     "entries",
-                    flowLayoutPanel1.Controls.OfType<Button>().Where(x => x != addButton && x != infoButton).Select(x =>
-                    {
-                        var dat = (ItmEntry)x.Tag;
-                        return new XElement(
-                            "entry",
-                            new XAttribute("name", dat.Name),
-                            new XAttribute("path", dat.Path),
-                            new XAttribute("args", dat.Args)
-                        );
-                    })
+                    flowLayoutPanel1.Controls.OfType<Button>().Where(x => x != addButton && x != infoButton).Where(x => x != null && x.Tag != null).Select(x =>
+                      {
+                          var dat = (ItmEntry)x.Tag;
+                          return new XElement(
+                              "entry",
+                              new XAttribute("name", dat.Name),
+                              new XAttribute("path", dat.Path),
+                              new XAttribute("args", dat.Args)
+                          );
+                      })
                 )
             );
             doc.Save(SavePath);
@@ -48,6 +48,52 @@ namespace WiiBrewToolbox
 
         public void InitialLoad()
         {
+            Stage("Loading settings...", 0);
+            SettingsManager.LoadSettings();
+
+            var skin = SettingsManager.Get("skinFile");
+
+            if (skin != null && SkinManager.SkinExists(skin))
+            {
+                Stage("Loading skin...", 0);
+                try
+                {
+                    SkinManager.LoadSkin(skin + ".wtbskin");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed to load skin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            LoadEntries();
+
+            ApplySkin();
+        }
+
+        public override void ApplySkin()
+        {
+            addButton.Image = SkinManager.AddImage;
+            infoButton.Image = SkinManager.AboutImage;
+            settingsButton.Image = SkinManager.SettingsImage;
+
+            Icon = SkinManager.AppIcon ?? Properties.Resources.toolbox1;
+
+            base.ApplySkin();
+        }
+
+        public void ReloadEntries()
+        {
+            flowLayoutPanel1.SuspendLayout();
+            for (var i = flowLayoutPanel1.Controls.Count - 1; i >= 0; --i)
+            {
+                var ctrl = flowLayoutPanel1.Controls[i];
+                if (ctrl == addButton || ctrl == infoButton || ctrl == settingsButton || ctrl == spacer)
+                    continue;
+
+                flowLayoutPanel1.Controls.Remove(ctrl);
+            }
+            flowLayoutPanel1.ResumeLayout();
             LoadEntries();
         }
 
@@ -72,7 +118,7 @@ namespace WiiBrewToolbox
                 var args = e.Attribute("args")?.Value ?? "";
                 var b = MakeButton(name, path, args);
                 flowLayoutPanel1.Controls.Add(b);
-                flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 4);
+                flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 5);
             }
             Stage("Finalizing...", ushort.MaxValue);
             flowLayoutPanel1.ResumeLayout();
@@ -88,16 +134,16 @@ namespace WiiBrewToolbox
         private Button MakeButton(string text, string path, string args)
         {
             var image = IconHelper.GetIcon(path);
-            if (image != null)
+            if (image.Image != null && !image.IsBuiltinImage)
             {
-                var t = IconHelper.ResizeTo(image);
-                image.Dispose();
-                image = t;
+                var t = IconHelper.ResizeTo(image.Image);
+                image.Image.Dispose();
+                image.Image = t;
             }
-            var b = new Button()
+            var b = new SkinnedButton()
             {
                 Text = text,
-                Image = image ?? Properties.Resources.appgeneric,
+                Image = image.Image ?? SkinManager.NoAppIconImage,
                 Size = addButton.Size,
                 TextImageRelation = TextImageRelation.ImageAboveText,
                 ContextMenuStrip = contextMenuStrip1,
@@ -153,7 +199,7 @@ namespace WiiBrewToolbox
 
                     var b = MakeButton(f.ItmName, f.ItmPath, f.ItmArgs);
                     flowLayoutPanel1.Controls.Add(b);
-                    flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 4);
+                    flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 5);
                     SaveEntries();
                 }
             }
@@ -216,13 +262,13 @@ namespace WiiBrewToolbox
                         Args = f.ItmArgs
                     };
                     var image = IconHelper.GetIcon(f.ItmPath);
-                    if (image != null)
+                    if (image.Image != null && !image.IsBuiltinImage)
                     {
-                        var t = IconHelper.ResizeTo(image);
-                        image.Dispose();
-                        image = t;
+                        var t = IconHelper.ResizeTo(image.Image);
+                        image.Image.Dispose();
+                        image.Image = t;
                     }
-                    button.Image = image ?? Properties.Resources.appgeneric;
+                    button.Image = image.Image ?? SkinManager.NoAppIconImage;
                     SaveEntries();
                 }
             }
@@ -232,6 +278,14 @@ namespace WiiBrewToolbox
         {
             using (var f = new AboutForm())
                 f.ShowDialog(this);
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            using (var f = new SettingsForm())
+            {
+                f.ShowDialog(this);
+            }
         }
     }
 

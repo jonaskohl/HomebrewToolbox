@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace WiiBrewToolbox
 {
-    public partial class AboutForm : Form
+    public partial class AboutForm : SkinnedForm
     {
         public AboutForm()
         {

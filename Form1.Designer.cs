@@ -32,23 +32,26 @@ namespace WiiBrewToolbox
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.addButton = new System.Windows.Forms.Button();
-            this.infoButton = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.addButton = new WiiBrewToolbox.SkinnedButton();
+            this.infoButton = new WiiBrewToolbox.SkinnedButton();
+            this.settingsButton = new WiiBrewToolbox.SkinnedButton();
+            this.spacer = new System.Windows.Forms.PictureBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spacer)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
             this.flowLayoutPanel1.Controls.Add(this.addButton);
             this.flowLayoutPanel1.Controls.Add(this.infoButton);
-            this.flowLayoutPanel1.Controls.Add(this.pictureBox1);
+            this.flowLayoutPanel1.Controls.Add(this.settingsButton);
+            this.flowLayoutPanel1.Controls.Add(this.spacer);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -83,13 +86,26 @@ namespace WiiBrewToolbox
             this.infoButton.UseVisualStyleBackColor = true;
             this.infoButton.Click += new System.EventHandler(this.infoButton_Click);
             // 
-            // pictureBox1
+            // settingsButton
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(183, 15);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(12, 78);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.settingsButton.Image = global::WiiBrewToolbox.Properties.Resources.settings;
+            this.settingsButton.Location = new System.Drawing.Point(183, 15);
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(78, 78);
+            this.settingsButton.TabIndex = 3;
+            this.settingsButton.Text = "&Settings...";
+            this.settingsButton.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.settingsButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.settingsButton.UseVisualStyleBackColor = true;
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            // 
+            // spacer
+            // 
+            this.spacer.Location = new System.Drawing.Point(267, 15);
+            this.spacer.Name = "spacer";
+            this.spacer.Size = new System.Drawing.Size(12, 78);
+            this.spacer.TabIndex = 2;
+            this.spacer.TabStop = false;
             // 
             // contextMenuStrip1
             // 
@@ -129,7 +145,7 @@ namespace WiiBrewToolbox
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Homebrew Toolbox";
             this.flowLayoutPanel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spacer)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -138,12 +154,13 @@ namespace WiiBrewToolbox
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Button addButton;
+        private WiiBrewToolbox.SkinnedButton addButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeEntryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.Button infoButton;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private WiiBrewToolbox.SkinnedButton infoButton;
+        private System.Windows.Forms.PictureBox spacer;
+        private SkinnedButton settingsButton;
     }
 }
 
