@@ -61,7 +61,17 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="BetterFlowLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="BitmapHelper.cs" />
+    <Compile Include="EffectLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EffectLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gravity.cs" />
     <Compile Include="ImageIconInfo.cs" />
     <Compile Include="ImageSizeMode.cs" />
     <Compile Include="SettingsForm.cs">
@@ -211,6 +221,7 @@
     <None Include="Resources\winload.gif" />
     <None Include="Resources\wtb_buttons_builtin.png" />
     <None Include="Resources\settings.png" />
+    <None Include="Resources\toolbox_w.png" />
     <Content Include="toolbox.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

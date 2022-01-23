@@ -33,7 +33,7 @@ namespace WiiBrewToolbox
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.skinnedButton1 = new WiiBrewToolbox.SkinnedButton();
             this.skinnedButton2 = new WiiBrewToolbox.SkinnedButton();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label1 = new WiiBrewToolbox.EffectLabel();
             this.skinComboBox = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -141,7 +141,7 @@ namespace WiiBrewToolbox
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private SkinnedButton skinnedButton1;
         private SkinnedButton skinnedButton2;
-        private System.Windows.Forms.Label label1;
+        private WiiBrewToolbox.EffectLabel label1;
         private System.Windows.Forms.ComboBox skinComboBox;
     }
 }

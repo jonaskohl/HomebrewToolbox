@@ -21,12 +21,18 @@ namespace WiiBrewToolbox
         public static Image UrlImage { get; private set; }
         public static Image SettingsImage { get; private set; }
         public static Image BackgroundImage { get; private set; }
-        public static ImageSizeMode BackgroundSizeMode { get; set; }
-        public static Color WindowForeground { get; set; }
+        public static Color WindowForeground { get; private set; }
+        public static Color WindowBackground { get; private set; }
+        public static ImageSizeMode BackgroundSizeMode { get; private set; }
+        public static Gravity BackgroundGravity { get; private set; }
+        public static bool UseWhiteForegrounds { get; private set; }
 
         public static Icon AppIcon { get; private set; }
 
         public static Image ButtonSprite { get; private set; }
+
+        public static Dictionary<string, Dictionary<string, string>> ParamMap { get; private set; }
+            = new Dictionary<string, Dictionary<string, string>>();
 
         private static SkinControlInformation skinControlInformation;
 
@@ -51,10 +57,22 @@ namespace WiiBrewToolbox
             SettingsImage = Properties.Resources.settings;
             BackgroundImage = null;
             BackgroundSizeMode = ImageSizeMode.None;
+            BackgroundGravity = Gravity.Left | Gravity.Top;
             WindowForeground = Color.Black;
+            WindowBackground = Color.FromArgb(240, 240, 240);
             AppIcon = null;
             ButtonSprite = Properties.Resources.wtb_buttons_builtin;
+            UseWhiteForegrounds = false;
             skinControlInformation = SkinControlInformation.Default;
+
+            ParamMap.Clear();
+        }
+
+        public static Color GetButtonShadowColor(ButtonImageState state)
+        {
+            var buttonDesc = skinControlInformation.ColorDescriptions.Where(i => i.Name == "BUTTONS").First();
+            var stateDesc = buttonDesc.ColorStates.Where(s => s.Key == "foregroundShadow").Where(s => s.ForState == state).First();
+            return stateDesc.color;
         }
 
         public static bool SkinExists(string skin)
@@ -150,6 +168,19 @@ namespace WiiBrewToolbox
             return doc.Root.Element("name")?.Value;
         }
 
+        public static string GetParam(string target, string name)
+        {
+            if (!ParamMap.ContainsKey(target))
+                return null;
+
+            var targetParams = ParamMap[target];
+
+            if (!targetParams.ContainsKey(name))
+                return null;
+
+            return targetParams[name];
+        }
+
         private static void ReadSkinInfo(XDocument doc)
         {
             Debug.Assert(doc.Root.Name == "wtbSkin");
@@ -161,35 +192,86 @@ namespace WiiBrewToolbox
             {
                 var xParamElems = xParams.Elements("param");
 
-                // TODO Create a proper param map
                 foreach (var xParam in xParamElems)
                 {
-                    if (xParam.Attribute("target")?.Value == "backgroundImage" && xParam.Attribute("name")?.Value == "sizingMode")
-                    {
-                        var paramValue = xParam.Value;
+                    var target = xParam.Attribute("target").Value;
+                    var name = xParam.Attribute("name").Value;
+                    var paramValue = xParam.Value;
 
-                        switch (paramValue)
-                        {
-                            case "none":
-                            case "":
-                                BackgroundSizeMode = ImageSizeMode.None;
-                                break;
-                            case "tile":
-                                BackgroundSizeMode = ImageSizeMode.Tile;
-                                break;
-                            case "stretch":
-                                BackgroundSizeMode = ImageSizeMode.Stretch;
-                                break;
-                            default:
-                                throw new Exception("Invalid size mode");
-                        }
-                    }
+                    if (!ParamMap.ContainsKey(target))
+                        ParamMap[target] = new Dictionary<string, string>();
 
-                    if (xParam.Attribute("target")?.Value == "window" && xParam.Attribute("name")?.Value == "foreground")
-                    {
-                        WindowForeground = ColorTranslator.FromHtml(xParam.Value);
-                    }
+                    ParamMap[target][name] = paramValue;
                 }
+            }
+
+            var windowForegroundParam = GetParam("window", "foreground");
+            var windowBackgroundParam = GetParam("window", "background");
+            var backgroundSizingModeParam = GetParam("backgroundImage", "sizingMode");
+            var backgroundGravityParam = GetParam("backgroundImage", "gravity");
+            var useWhiteForegroundsParam = GetParam("global", "useWhiteForegrounds");
+
+            if (windowForegroundParam != null)
+                WindowForeground = GetColor(windowForegroundParam);
+
+            if (windowBackgroundParam != null)
+                WindowBackground = GetColor(windowBackgroundParam);
+
+            if (backgroundSizingModeParam != null)
+                BackgroundSizeMode = GetSizeMode(backgroundSizingModeParam);
+
+            if (backgroundGravityParam != null)
+                BackgroundGravity = GetGravities(backgroundGravityParam);
+
+            if (useWhiteForegroundsParam != null)
+                UseWhiteForegrounds = useWhiteForegroundsParam.ToLower() == "true";
+        }
+
+        private static Gravity GetGravities(string val)
+        {
+            var vals = val.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var g = Gravity.None;
+            foreach (var v in vals)
+                g |= GetGravity(v);
+            return g;
+        }
+
+        private static Gravity GetGravity(string val)
+        {
+            switch (val)
+            {
+                case "": case "none": return Gravity.None;
+                case "left": return Gravity.Left;
+                case "right": return Gravity.Right;
+                case "top": return Gravity.Top;
+                case "bottom": return Gravity.Bottom;
+                default:
+                    throw new Exception("Invalid gravity");
+            }
+        }
+
+        private static Color GetColor(string val)
+        {
+            return ColorTranslator.FromHtml(val);
+        }
+
+        private static ImageSizeMode GetSizeMode(string val)
+        {
+            switch (val)
+            {
+                case "none":
+                case "":
+                    return ImageSizeMode.None;
+                case "tile":
+                    return ImageSizeMode.Tile;
+                case "tile-x":
+                    return ImageSizeMode.TileX;
+                case "tile-y":
+                    return ImageSizeMode.TileY;
+                case "stretch":
+                    return ImageSizeMode.Stretch;
+                default:
+                    throw new Exception("Invalid size mode");
             }
         }
 

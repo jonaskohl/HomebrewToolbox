@@ -31,7 +31,7 @@ namespace WiiBrewToolbox
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.linkLabel1 = new WiiBrewToolbox.EffectLinkLabel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.closeButton = new WiiBrewToolbox.SkinnedButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -178,7 +178,7 @@ namespace WiiBrewToolbox
         private WiiBrewToolbox.SkinnedButton closeButton;
         private System.Windows.Forms.PictureBox pictureBox1;
         private ShadowLabel shadowLabel1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private WiiBrewToolbox.EffectLinkLabel linkLabel1;
         private ScrollLabel scrollLabel1;
         private System.Windows.Forms.Label label1;
     }

@@ -31,14 +31,14 @@ namespace WiiBrewToolbox
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.cancelButton = new WiiBrewToolbox.SkinnedButton();
             this.okButton = new WiiBrewToolbox.SkinnedButton();
+            this.cancelButton = new WiiBrewToolbox.SkinnedButton();
             this.nameTextBox = new System.Windows.Forms.TextBox();
-            this.nameLabel = new System.Windows.Forms.Label();
-            this.pathLabel = new System.Windows.Forms.Label();
+            this.nameLabel = new WiiBrewToolbox.EffectLabel();
+            this.pathLabel = new WiiBrewToolbox.EffectLabel();
             this.pathComboBox = new System.Windows.Forms.ComboBox();
             this.browseButton = new WiiBrewToolbox.SkinnedButton();
-            this.argumentsLabel = new System.Windows.Forms.Label();
+            this.argumentsLabel = new WiiBrewToolbox.EffectLabel();
             this.argumentsTextBox = new System.Windows.Forms.TextBox();
             this.loadingIcon = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -88,6 +88,17 @@ namespace WiiBrewToolbox
             this.flowLayoutPanel1.Size = new System.Drawing.Size(164, 30);
             this.flowLayoutPanel1.TabIndex = 5;
             // 
+            // okButton
+            // 
+            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.okButton.Enabled = false;
+            this.okButton.Location = new System.Drawing.Point(3, 3);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(76, 24);
+            this.okButton.TabIndex = 4;
+            this.okButton.Text = "&OK";
+            this.okButton.UseVisualStyleBackColor = true;
+            // 
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -97,16 +108,6 @@ namespace WiiBrewToolbox
             this.cancelButton.TabIndex = 3;
             this.cancelButton.Text = "&Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            // 
-            // okButton
-            // 
-            this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(3, 3);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(76, 24);
-            this.okButton.TabIndex = 4;
-            this.okButton.Text = "&OK";
-            this.okButton.UseVisualStyleBackColor = true;
             // 
             // nameTextBox
             // 
@@ -228,13 +229,13 @@ namespace WiiBrewToolbox
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private WiiBrewToolbox.SkinnedButton okButton;
         private WiiBrewToolbox.SkinnedButton cancelButton;
-        private System.Windows.Forms.Label nameLabel;
-        private System.Windows.Forms.Label pathLabel;
+        private WiiBrewToolbox.EffectLabel nameLabel;
+        private WiiBrewToolbox.EffectLabel pathLabel;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.ComboBox pathComboBox;
         private WiiBrewToolbox.SkinnedButton browseButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Label argumentsLabel;
+        private WiiBrewToolbox.EffectLabel argumentsLabel;
         private System.Windows.Forms.TextBox argumentsTextBox;
         private System.Windows.Forms.PictureBox loadingIcon;
     }

@@ -4,6 +4,8 @@
     {
         None,
         Tile,
+        TileX,
+        TileY,
         Stretch
     }
 }

@@ -33,6 +33,23 @@ namespace WiiBrewToolbox
             sb.AppendLine("Other icons from Microsoft\u00AE Windows\u00AE 10");
 
             scrollLabel1.Text = sb.ToString();
+
+            ApplySkinInternal();
+        }
+
+        public override void ApplySkin()
+        {
+            base.ApplySkin();
+
+            ApplySkinInternal();
+        }
+
+        private void ApplySkinInternal()
+        {
+            pictureBox1.Image = SkinManager.UseWhiteForegrounds ? Properties.Resources.toolbox_w : Properties.Resources.toolbox;
+            shadowLabel1.ForeColor = SkinManager.UseWhiteForegrounds ? Color.White : Color.FromArgb(62, 155, 213);
+            shadowLabel1.ShadowColor = SkinManager.UseWhiteForegrounds ? Color.Black : Color.LightGray;
+            linkLabel1.LinkColor = SkinManager.UseWhiteForegrounds ? Color.White : SystemColors.HotTrack;
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

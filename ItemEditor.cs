@@ -125,6 +125,8 @@ namespace WiiBrewToolbox
             ApplyName();
             argumentsLabel.Enabled =
                 argumentsTextBox.Enabled = !PathHelper.IsURL(pathComboBox.Text);
+
+            okButton.Enabled = pathComboBox.Text.Trim().Length > 0;
         }
     }
 }

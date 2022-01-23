@@ -31,7 +31,7 @@ namespace WiiBrewToolbox
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel1 = new WiiBrewToolbox.BetterFlowLayoutPanel();
             this.addButton = new WiiBrewToolbox.SkinnedButton();
             this.infoButton = new WiiBrewToolbox.SkinnedButton();
             this.settingsButton = new WiiBrewToolbox.SkinnedButton();
@@ -153,7 +153,7 @@ namespace WiiBrewToolbox
 
         #endregion
 
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private WiiBrewToolbox.BetterFlowLayoutPanel flowLayoutPanel1;
         private WiiBrewToolbox.SkinnedButton addButton;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem removeEntryToolStripMenuItem;

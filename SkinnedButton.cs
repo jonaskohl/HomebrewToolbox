@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -55,38 +56,57 @@ namespace WiiBrewToolbox
                 return;
             }
 
-            var b = new Rectangle(Point.Empty, Size);
-            var s = GetButtonState();
+            var bounds = new Rectangle(Point.Empty, Size);
+            var state = GetButtonState();
 
-            var c = SkinManager.GetButtonColor(s);
+            var foreground = SkinManager.GetButtonColor(state);
+            var useShadow = SkinManager.GetParam("button", "shadow")?.ToLower() == "true";
+            var shadowColor = useShadow ? SkinManager.GetButtonShadowColor(state) : Color.Transparent;
+            var shadowOffsetX = useShadow ? int.Parse(SkinManager.GetParam("button", "shadowOffsetX") ?? "0", NumberStyles.Integer, CultureInfo.InvariantCulture) : 0;
+            var shadowOffsetY = useShadow ? int.Parse(SkinManager.GetParam("button", "shadowOffsetY") ?? "0", NumberStyles.Integer, CultureInfo.InvariantCulture) : 0;
 
-            SkinManager.RenderButtonImage(pevent.Graphics, b, s);
+            SkinManager.RenderButtonImage(pevent.Graphics, bounds, state);
 
             if (Image == null)
             {
-                TextRenderer.DrawText(pevent.Graphics, Text, Font, b, c,
+                if (useShadow)
+                    TextRenderer.DrawText(pevent.Graphics, Text, Font, OffsetRect(bounds, shadowOffsetX, shadowOffsetY), shadowColor,
+                        (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter
+                        );
+
+                TextRenderer.DrawText(pevent.Graphics, Text, Font, bounds, foreground,
                     (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter
                     );
-            } else
+            }
+            else
             {
                 var imgX = Width / 2 - Image.Width / 2;
                 pevent.Graphics.DrawImage(Image, new Rectangle(new Point(imgX, 4), Image.Size));
-                using (var sf = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far, HotkeyPrefix = ShowKeyboardCues ? System.Drawing.Text.HotkeyPrefix.Show : System.Drawing.Text.HotkeyPrefix.Hide })
-                    TextRenderer.DrawText(pevent.Graphics, Text, Font, new Rectangle(
-                        4,
-                        Image.Height + 8,
-                        b.Width - 8,
-                        b.Height - 12 - Image.Height
-                    ), c, (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+                var tr = new Rectangle(
+                    4,
+                    Image.Height + 8,
+                    bounds.Width - 8,
+                    bounds.Height - 12 - Image.Height
+                );
+
+                if (useShadow)
+                    TextRenderer.DrawText(pevent.Graphics, Text, Font, OffsetRect(tr, shadowOffsetX, shadowOffsetY), shadowColor, (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
+
+                TextRenderer.DrawText(pevent.Graphics, Text, Font, tr, foreground, (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
             }
 
             if (ShowFocusCues && Focused)
                 ControlPaint.DrawFocusRectangle(pevent.Graphics, new Rectangle(
-                    b.X + 3,
-                    b.Y + 3,
-                    b.Width - 6,
-                    b.Height - 6
+                    bounds.X + 3,
+                    bounds.Y + 3,
+                    bounds.Width - 6,
+                    bounds.Height - 6
                 ));
+        }
+
+        private Rectangle OffsetRect(Rectangle bounds, int x, int y)
+        {
+            return new Rectangle(bounds.X + x, bounds.Y + y, bounds.Width, bounds.Height);
         }
 
         private ButtonImageState GetButtonState()
