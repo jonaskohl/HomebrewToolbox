@@ -41,8 +41,9 @@ namespace WiiBrewToolbox
         [STAThread]
         static void Main()
         {
-            //Application.EnableVisualStyles();
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.VisualStyleState = System.Windows.Forms.VisualStyles.VisualStyleState.NonClientAreaEnabled;
 
             ApplyHandCursorFix();
 

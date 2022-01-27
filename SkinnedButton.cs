@@ -64,30 +64,37 @@ namespace WiiBrewToolbox
             var shadowColor = useShadow ? SkinManager.GetButtonShadowColor(state) : Color.Transparent;
             var shadowOffsetX = useShadow ? int.Parse(SkinManager.GetParam("button", "shadowOffsetX") ?? "0", NumberStyles.Integer, CultureInfo.InvariantCulture) : 0;
             var shadowOffsetY = useShadow ? int.Parse(SkinManager.GetParam("button", "shadowOffsetY") ?? "0", NumberStyles.Integer, CultureInfo.InvariantCulture) : 0;
+            var contentPadding = SkinManager.GetButtonContentPadding(state);
+
+            var innerBounds = ApplyPadding(bounds, contentPadding);
 
             SkinManager.RenderButtonImage(pevent.Graphics, bounds, state);
+            //pevent.Graphics.FillRectangle(Brushes.Blue, bounds);
+            //pevent.Graphics.FillRectangle(Brushes.Fuchsia, innerBounds);
 
             if (Image == null)
             {
                 if (useShadow)
-                    TextRenderer.DrawText(pevent.Graphics, Text, Font, OffsetRect(bounds, shadowOffsetX, shadowOffsetY), shadowColor,
+                    TextRenderer.DrawText(pevent.Graphics, Text, Font, OffsetRect(innerBounds, shadowOffsetX, shadowOffsetY), shadowColor,
                         (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter
                         );
 
-                TextRenderer.DrawText(pevent.Graphics, Text, Font, bounds, foreground,
+                TextRenderer.DrawText(pevent.Graphics, Text, Font, innerBounds, foreground,
                     (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter
                     );
             }
             else
             {
-                var imgX = Width / 2 - Image.Width / 2;
-                pevent.Graphics.DrawImage(Image, new Rectangle(new Point(imgX, 4), Image.Size));
+                var imgX = innerBounds.X + innerBounds.Width / 2 - Image.Width / 2;
+                pevent.Graphics.DrawImage(Image, new Rectangle(new Point(imgX, innerBounds.Y + 4), Image.Size));
                 var tr = new Rectangle(
-                    4,
-                    Image.Height + 8,
-                    bounds.Width - 8,
-                    bounds.Height - 12 - Image.Height
+                    innerBounds.X + 4,
+                    innerBounds.Y + Image.Height + 8,
+                    innerBounds.Width - 8,
+                    innerBounds.Height - 12 - Image.Height
                 );
+
+                //pevent.Graphics.FillRectangle(Brushes.Lime, tr);
 
                 if (useShadow)
                     TextRenderer.DrawText(pevent.Graphics, Text, Font, OffsetRect(tr, shadowOffsetX, shadowOffsetY), shadowColor, (ShowKeyboardCues ? 0 : TextFormatFlags.HidePrefix) | TextFormatFlags.HorizontalCenter | TextFormatFlags.GlyphOverhangPadding | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
@@ -97,11 +104,21 @@ namespace WiiBrewToolbox
 
             if (ShowFocusCues && Focused)
                 ControlPaint.DrawFocusRectangle(pevent.Graphics, new Rectangle(
-                    bounds.X + 3,
-                    bounds.Y + 3,
-                    bounds.Width - 6,
-                    bounds.Height - 6
-                ));
+                    innerBounds.X + 3,
+                    innerBounds.Y + 3,
+                    innerBounds.Width - 6,
+                    innerBounds.Height - 6
+                ), Color.White, Color.Black);
+        }
+
+        private Rectangle ApplyPadding(Rectangle bounds, Padding contentPadding)
+        {
+            return new Rectangle(
+                bounds.X + contentPadding.Left,
+                bounds.Y + contentPadding.Top,
+                bounds.Width - contentPadding.Horizontal,
+                bounds.Height - contentPadding.Vertical
+            );
         }
 
         private Rectangle OffsetRect(Rectangle bounds, int x, int y)

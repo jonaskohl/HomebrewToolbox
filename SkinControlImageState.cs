@@ -9,5 +9,6 @@ namespace WiiBrewToolbox
         public Point From;
         public Size Size;
         public Padding Slices;
+        public Padding Padding;
     }
 }

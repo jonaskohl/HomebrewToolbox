@@ -95,7 +95,7 @@ namespace WiiBrewToolbox
             this.okButton.Location = new System.Drawing.Point(3, 3);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(76, 24);
-            this.okButton.TabIndex = 4;
+            this.okButton.TabIndex = 3;
             this.okButton.Text = "&OK";
             this.okButton.UseVisualStyleBackColor = true;
             // 
@@ -105,7 +105,7 @@ namespace WiiBrewToolbox
             this.cancelButton.Location = new System.Drawing.Point(85, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(76, 24);
-            this.cancelButton.TabIndex = 3;
+            this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "&Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             // 

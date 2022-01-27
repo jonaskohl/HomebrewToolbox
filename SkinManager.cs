@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
 
 namespace WiiBrewToolbox
@@ -64,8 +65,16 @@ namespace WiiBrewToolbox
             ButtonSprite = Properties.Resources.wtb_buttons_builtin;
             UseWhiteForegrounds = false;
             skinControlInformation = SkinControlInformation.Default;
+            Application.VisualStyleState = VisualStyleState.ClientAndNonClientAreasEnabled;
 
             ParamMap.Clear();
+        }
+
+        public static Padding GetButtonContentPadding(ButtonImageState state)
+        {
+            var buttonDesc = skinControlInformation.ImageDescriptions.Where(i => i.Name == "BUTTONS").First();
+            var stateDesc = buttonDesc.ImageStates.Where(s => s.ForState == state).First();
+            return stateDesc.Padding;
         }
 
         public static Color GetButtonShadowColor(ButtonImageState state)
@@ -94,7 +103,7 @@ namespace WiiBrewToolbox
             {
                 Filename = Path.GetFileNameWithoutExtension(i),
                 DisplayName = GetSkinName(i)
-            }).ToArray();
+            }).Where(i => i.DisplayName != null).ToArray();
         }
 
         public static void LoadSkin(string filename)
@@ -210,6 +219,7 @@ namespace WiiBrewToolbox
             var backgroundSizingModeParam = GetParam("backgroundImage", "sizingMode");
             var backgroundGravityParam = GetParam("backgroundImage", "gravity");
             var useWhiteForegroundsParam = GetParam("global", "useWhiteForegrounds");
+            var useVisualStylesParam = GetParam("global", "useVisualStyles");
 
             if (windowForegroundParam != null)
                 WindowForeground = GetColor(windowForegroundParam);
@@ -225,6 +235,8 @@ namespace WiiBrewToolbox
 
             if (useWhiteForegroundsParam != null)
                 UseWhiteForegrounds = useWhiteForegroundsParam.ToLower() == "true";
+
+            Application.VisualStyleState = (useVisualStylesParam?.ToLower() == "true") ? VisualStyleState.ClientAndNonClientAreasEnabled : VisualStyleState.NonClientAreaEnabled;
         }
 
         private static Gravity GetGravities(string val)

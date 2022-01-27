@@ -39,6 +39,9 @@ namespace WiiBrewToolbox
 
         private void browseButton_Click(object sender, EventArgs e)
         {
+            var vss = Application.VisualStyleState;
+            Application.VisualStyleState |= System.Windows.Forms.VisualStyles.VisualStyleState.ClientAreaEnabled;
+
             if (ModifierKeys == Keys.Shift)
             {
                 var d = new VistaFolderBrowserDialog();
@@ -58,6 +61,10 @@ namespace WiiBrewToolbox
                     ApplyName();
                 }
             }
+
+            okButton.Enabled = pathComboBox.Text.Trim().Length > 0;
+
+            Application.VisualStyleState = vss;
         }
 
         private void ApplyName()
@@ -75,8 +82,8 @@ namespace WiiBrewToolbox
                     ServicePointManager.Expect100Continue = true;
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     wc.DownloadStringCompleted += Wc_DownloadStringCompleted;
-                    wc.DownloadStringAsync(new Uri(ItmPath));
                     wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
+                    wc.DownloadStringAsync(new Uri(ItmPath));
                     loadingIcon.Show();
                     okButton.Enabled = false;
                     pathComboBox.Enabled = false;

@@ -47,13 +47,15 @@ namespace WiiBrewToolbox
                     var from = GetPoint(xstate.Attribute("from").Value);
                     var size = new Size(GetPoint(xstate.Attribute("size").Value));
                     var slices = GetPadding(xstate.Attribute("slices").Value);
+                    var padding = GetPadding(xstate.Attribute("padding")?.Value);
 
                     return new SkinControlImageState()
                     {
                         ForState = state,
                         From = from,
                         Size = size,
-                        Slices = slices
+                        Slices = slices,
+                        Padding = padding
                     };
                 });
 
@@ -90,6 +92,9 @@ namespace WiiBrewToolbox
 
         private static Padding GetPadding(string value)
         {
+            if (value == null)
+                return Padding.Empty;
+
             var fields = value.Split(new[] { ',' }, 4, StringSplitOptions.RemoveEmptyEntries);
             var numbers = fields.Select(n => int.Parse(n, NumberStyles.Integer, CultureInfo.InvariantCulture)).ToArray();
             return new Padding(numbers[0], numbers[1], numbers[2], numbers[3]);
