@@ -104,13 +104,16 @@ namespace WiiBrewToolbox
             // skinComboBox
             // 
             this.skinComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.skinComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
             this.skinComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.skinComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.skinComboBox.FormattingEnabled = true;
             this.skinComboBox.Location = new System.Drawing.Point(103, 3);
             this.skinComboBox.Name = "skinComboBox";
-            this.skinComboBox.Size = new System.Drawing.Size(210, 21);
+            this.skinComboBox.Size = new System.Drawing.Size(210, 22);
             this.skinComboBox.TabIndex = 2;
+            this.skinComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.skinComboBox_DrawItem);
+            this.skinComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.skinComboBox_MeasureItem);
             // 
             // SettingsForm
             // 
