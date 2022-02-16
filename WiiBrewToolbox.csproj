@@ -75,6 +75,7 @@
     <Compile Include="Gravity.cs" />
     <Compile Include="ImageIconInfo.cs" />
     <Compile Include="ImageSizeMode.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

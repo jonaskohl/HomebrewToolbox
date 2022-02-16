@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -27,6 +28,9 @@ namespace WiiBrewToolbox
         public static ImageSizeMode BackgroundSizeMode { get; private set; }
         public static Gravity BackgroundGravity { get; private set; }
         public static bool UseWhiteForegrounds { get; private set; }
+        public static Cursor MainCursor { get; private set; }
+        public static Cursor LinkCursor { get; private set; }
+        public static Cursor TextCursor { get; private set; }
 
         public static Icon AppIcon { get; private set; }
 
@@ -43,8 +47,20 @@ namespace WiiBrewToolbox
             "CONTROLS.XML", "SKIN.XML"
         };
 
+        private static Cursor defaultCursor;
+        private static Cursor handCursor;
+        private static Cursor textCursor;
+
+        const string CUR_FIELD_DEFAULT = "defaultCursor";
+        const string CUR_FIELD_HAND = "hand";
+        const string CUR_FIELD_TEXT = "iBeam";
+
         static SkinManager()
         {
+            defaultCursor = Cursors.Default;
+            handCursor = Program.SystemHandCursor;
+            textCursor = Cursors.IBeam;
+
             ResetSkin();
         }
 
@@ -66,8 +82,19 @@ namespace WiiBrewToolbox
             UseWhiteForegrounds = false;
             skinControlInformation = SkinControlInformation.Default;
             Application.VisualStyleState = VisualStyleState.ClientAndNonClientAreasEnabled;
+            MainCursor = null;
+            LinkCursor = null;
+            TextCursor = null;
+            SetFrameworkCursor(defaultCursor, CUR_FIELD_DEFAULT);
+            SetFrameworkCursor(handCursor, CUR_FIELD_HAND);
+            SetFrameworkCursor(textCursor, CUR_FIELD_TEXT);
 
             ParamMap.Clear();
+        }
+
+        private static void SetFrameworkCursor(Cursor cur, string fieldName)
+        {
+            typeof(Cursors).GetField(fieldName, BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, cur);
         }
 
         public static Padding GetButtonContentPadding(ButtonImageState state)
@@ -144,6 +171,22 @@ namespace WiiBrewToolbox
 
                     else if (entry.FileName == "CONTROLS.XML")
                         skinControlInformation = SkinControlInformation.FromXML(ReadXML(entry));
+
+                    else if (entry.FileName == "DEFAULT.CUR")
+                    {
+                        MainCursor = ReadCursor(entry);
+                        SetFrameworkCursor(MainCursor, CUR_FIELD_DEFAULT);
+                    }
+                    else if (entry.FileName == "HAND.CUR")
+                    {
+                        LinkCursor = ReadCursor(entry);
+                        SetFrameworkCursor(LinkCursor, CUR_FIELD_HAND);
+                    }
+                    else if (entry.FileName == "TEXT.CUR")
+                    {
+                        TextCursor = ReadCursor(entry);
+                        SetFrameworkCursor(TextCursor, CUR_FIELD_TEXT);
+                    }
 
                     else if (entry.FileName == "SKIN.XML")
                         ReadSkinInfo(ReadXML(entry));
@@ -443,6 +486,16 @@ namespace WiiBrewToolbox
                 initializeMethod.Invoke(instance, new object[] { 0, 0 });
 
                 return instance;
+            }
+        }
+
+        private static Cursor ReadCursor(ZipEntry entry)
+        {
+            using (var stream = entry.OpenReader())
+            using (var memStream = new MemoryStream())
+            {
+                stream.CopyTo(memStream);
+                return NativeMethods.LoadCustomCursorFromFileWithUglyTempFile(memStream);
             }
         }
     }

@@ -17,7 +17,7 @@ namespace WiiBrewToolbox
         private static extern bool SetProcessDPIAware();
 
         private const int IDC_HAND = 32649;
-        private static Cursor SystemHandCursor;
+        public static Cursor SystemHandCursor { get; private set; }
 
         private static void ApplyHandCursorFix()
         {
