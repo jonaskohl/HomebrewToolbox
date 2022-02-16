@@ -17,7 +17,9 @@ namespace WiiBrewToolbox
 {
     public partial class Form1 : SkinnedForm
     {
-        public event EventHandler<LoadingStateChangedEventArgs> LoadingStageChanged;
+        public delegate void LoadingStageChangedEventHandler(object sender, LoadingStateChangedEventArgs e);
+
+        public event LoadingStageChangedEventHandler LoadingStageChanged;
 
         public Form1()
         {

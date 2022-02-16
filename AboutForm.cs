@@ -27,10 +27,11 @@ namespace WiiBrewToolbox
             sb.AppendLine();
             sb.AppendLine("OS version: " + Environment.OSVersion.VersionString);
             sb.AppendLine("Runtime version: " + Environment.Version);
+            sb.AppendLine("DotNetZip version: " + typeof(Ionic.Zip.ZipFile).Assembly.GetName().Version);
             sb.AppendLine();
             sb.AppendLine("Application icon from \"IconExperience O-Collection v2\" by Incors GmbH, used under license");
-            sb.AppendLine();
-            sb.AppendLine("Other icons from Microsoft\u00AE Windows\u00AE 10");
+            //sb.AppendLine();
+            //sb.AppendLine("Other icons from Microsoft\u00AE Windows\u00AE 10");
 
             scrollLabel1.Text = sb.ToString();
 

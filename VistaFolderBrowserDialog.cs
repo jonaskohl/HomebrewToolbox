@@ -102,7 +102,7 @@ namespace WiiBrewToolbox
             {
                 item.GetDisplayName(SIGDN.FILESYSPATH, out path);
             }
-            catch (ArgumentException ex) when (ex.HResult == -2147024809)
+            catch (ArgumentException)// ex) when (ex.HResult == -2147024809)
             {
                 path = null;
             }

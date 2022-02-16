@@ -24,6 +24,14 @@ namespace WiiBrewToolbox
             InitializeComponent();
         }
 
+        private static bool SupportsVistaDialog
+        {
+            get
+            {
+                return Environment.OSVersion.Version.Major >= 6 && Application.RenderWithVisualStyles;
+            }
+        }
+
         public ItemEditor(Button btn)
         {
             InitializeComponent();
@@ -44,12 +52,24 @@ namespace WiiBrewToolbox
 
             if (ModifierKeys == Keys.Shift)
             {
-                var d = new VistaFolderBrowserDialog();
-                d.SelectedPath = pathComboBox.Text;
-                if (d.ShowDialog(this))
+                if (SupportsVistaDialog)
                 {
-                    pathComboBox.Text = d.SelectedPath;
-                    ApplyName();
+                    var d = new VistaFolderBrowserDialog();
+                    d.SelectedPath = pathComboBox.Text;
+                    if (d.ShowDialog(this))
+                    {
+                        pathComboBox.Text = d.SelectedPath;
+                        ApplyName();
+                    }
+                } else
+                {
+                    var d = new FolderBrowserDialog();
+                    d.SelectedPath = pathComboBox.Text;
+                    if (d.ShowDialog(this) == DialogResult.OK)
+                    {
+                        pathComboBox.Text = d.SelectedPath;
+                        ApplyName();
+                    }
                 }
             }
             else
@@ -80,7 +100,8 @@ namespace WiiBrewToolbox
                 {
                     var wc = new WebClient();
                     ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
                     wc.DownloadStringCompleted += Wc_DownloadStringCompleted;
                     wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
                     wc.DownloadStringAsync(new Uri(ItmPath));

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Ionic.Zip;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -108,9 +108,9 @@ namespace WiiBrewToolbox
 
         public static void LoadSkin(string filename)
         {
-            using (ZipArchive zip = ZipFile.Open(Path.Combine(Application.StartupPath, filename), ZipArchiveMode.Read))
+            using (ZipFile zip = ZipFile.Read(Path.Combine(Application.StartupPath, filename)))
             {
-                var names = zip.Entries.Select(e => e.Name);
+                var names = zip.Entries.Select(e => e.FileName);
                 if (!requiredFiles.All(r => names.Contains(r)))
                     throw new Exception("Invalid skin file. The following files are missing:\r\n" + string.Join("\r\n",
                         requiredFiles.Where(r => !names.Contains(r))
@@ -118,34 +118,34 @@ namespace WiiBrewToolbox
 
                 ResetSkin();
 
-                foreach (ZipArchiveEntry entry in zip.Entries)
+                foreach (ZipEntry entry in zip.Entries)
                 {
-                    if (entry.Name == "ABOUT.PNG")
+                    if (entry.FileName == "ABOUT.PNG")
                         AboutImage = ReadImage(entry);
-                    else if (entry.Name == "ADD.PNG")
+                    else if (entry.FileName == "ADD.PNG")
                         AddImage = ReadImage(entry);
-                    else if (entry.Name == "APP_GENERIC.PNG")
+                    else if (entry.FileName == "APP_GENERIC.PNG")
                         NoAppIconImage = ReadImage(entry);
-                    else if (entry.Name == "FOLDER.PNG")
+                    else if (entry.FileName == "FOLDER.PNG")
                         FolderImage = ReadImage(entry);
-                    else if (entry.Name == "URL.PNG")
+                    else if (entry.FileName == "URL.PNG")
                         UrlImage = ReadImage(entry);
-                    else if (entry.Name == "SETTINGS.PNG")
+                    else if (entry.FileName == "SETTINGS.PNG")
                         SettingsImage = ReadImage(entry);
 
-                    else if (entry.Name == "BACKGROUND.PNG") // Optional
+                    else if (entry.FileName == "BACKGROUND.PNG") // Optional
                         BackgroundImage = ReadImage(entry);
 
-                    else if (entry.Name == "APP.ICO") // Optional
+                    else if (entry.FileName == "APP.ICO") // Optional
                         AppIcon = ReadIcon(entry);
 
-                    else if (entry.Name == "BUTTONS.PNG")
+                    else if (entry.FileName == "BUTTONS.PNG")
                         ButtonSprite = ReadImage(entry);
 
-                    else if (entry.Name == "CONTROLS.XML")
+                    else if (entry.FileName == "CONTROLS.XML")
                         skinControlInformation = SkinControlInformation.FromXML(ReadXML(entry));
 
-                    else if (entry.Name == "SKIN.XML")
+                    else if (entry.FileName == "SKIN.XML")
                         ReadSkinInfo(ReadXML(entry));
                 }
             }
@@ -153,15 +153,15 @@ namespace WiiBrewToolbox
 
         private static string GetSkinName(string filename)
         {
-            using (ZipArchive zip = ZipFile.Open(Path.Combine(Application.StartupPath, filename), ZipArchiveMode.Read))
+            using (ZipFile zip = ZipFile.Read(Path.Combine(Application.StartupPath, filename)))
             {
-                var names = zip.Entries.Select(e => e.Name);
+                var names = zip.Entries.Select(e => e.FileName);
                 if (!requiredFiles.All(r => names.Contains(r)))
                     return null;
 
-                foreach (ZipArchiveEntry entry in zip.Entries)
+                foreach (ZipEntry entry in zip.Entries)
                 {
-                    if (entry.Name == "SKIN.XML")
+                    if (entry.FileName == "SKIN.XML")
                         return GetSkinName(ReadXML(entry));
                 }
             }
@@ -414,21 +414,21 @@ namespace WiiBrewToolbox
             graphics.DrawImage(sourceImage, centerRightDest, centerRightSrc, GraphicsUnit.Pixel);
         }
 
-        private static XDocument ReadXML(ZipArchiveEntry entry)
+        private static XDocument ReadXML(ZipEntry entry)
         {
-            using (var stream = entry.Open())
+            using (var stream = entry.OpenReader())
                 return XDocument.Load(stream);
         }
 
-        private static Image ReadImage(ZipArchiveEntry entry)
+        private static Image ReadImage(ZipEntry entry)
         {
-            using (var stream = entry.Open())
+            using (var stream = entry.OpenReader())
                 return Image.FromStream(stream);
         }
 
-        private static Icon ReadIcon(ZipArchiveEntry entry)
+        private static Icon ReadIcon(ZipEntry entry)
         {
-            using (var stream = entry.Open())
+            using (var stream = entry.OpenReader())
             using (var memStream = new MemoryStream())
             {
                 stream.CopyTo(memStream);
