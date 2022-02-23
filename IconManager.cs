@@ -17,6 +17,9 @@ namespace WiiBrewToolbox
     /// </summary>
     public static class IconManager
     {
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref Shell32.Shfileinfo psfi, uint cbFileInfo, uint uFlags);
+
         private static readonly Dictionary<string, Bitmap> _smallIconCache = new Dictionary<string, Bitmap>();
         private static readonly Dictionary<string, Bitmap> _largeIconCache = new Dictionary<string, Bitmap>();
         /// <summary>
@@ -97,7 +100,7 @@ namespace WiiBrewToolbox
                 , 0
                 , ref sfi
                 , (uint)Marshal.SizeOf(sfi)
-                , Shell32.ShgfiSysiconIndex| Shell32.ShgfiLargeicon | Shell32.ShgfiUsefileattributes );
+                , Shell32.ShgfiSysiconIndex | Shell32.ShgfiLargeicon | Shell32.ShgfiUsefileattributes);
             return sfi.iIcon;
         }
 
@@ -115,17 +118,38 @@ namespace WiiBrewToolbox
 
         public static Bitmap GetIconEx(string name)
         {
-            var index = GetIconIndex("*" + Path.GetExtension(name));
-            var hIcon = GetJumboIcon(index);
-
-            Bitmap b;
-            using (var ico = (Icon)Icon.FromHandle(hIcon).Clone())
+            try
             {
-                // save to file (or show in a picture box)
-                b = ico.ToBitmap();
+                IntPtr hIcon;
+
+                if (Environment.OSVersion.Version.Major < 6)
+                {
+                    const uint SHGFI_ICON = 0x000000100;
+
+                    var fi = new Shell32.Shfileinfo();
+                    SHGetFileInfo(name, 0, ref fi, (uint)Marshal.SizeOf(fi), SHGFI_ICON);
+
+                    hIcon = fi.hIcon;
+                }
+                else
+                {
+                    var index = GetIconIndex("*" + Path.GetExtension(name));
+                    hIcon = GetJumboIcon(index);
+                }
+
+                Bitmap b;
+                using (var ico = (Icon)Icon.FromHandle(hIcon).Clone())
+                {
+                    // save to file (or show in a picture box)
+                    b = ico.ToBitmap();
+                }
+                User32.DestroyIcon(hIcon); // don't forget to clean up
+                return b;
             }
-            User32.DestroyIcon(hIcon); // don't forget to cleanup
-            return b;
+            catch (NullReferenceException)
+            {
+                return null;
+            }
         }
 
         /// <summary>

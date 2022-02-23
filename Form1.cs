@@ -118,7 +118,12 @@ namespace WiiBrewToolbox
                 var name = e.Attribute("name").Value;
                 var path = e.Attribute("path").Value;
                 var args = e.Attribute("args")?.Value ?? "";
-                var b = MakeButton(name, path, args);
+                Image img = null;
+
+                if (e.Attribute("image")?.Value != null)
+                    img = Image.FromFile(e.Attribute("image").Value);
+
+                var b = MakeButton(name, path, args, img);
                 flowLayoutPanel1.Controls.Add(b);
                 flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 5);
             }
@@ -133,19 +138,33 @@ namespace WiiBrewToolbox
             LoadingStageChanged?.Invoke(this, new LoadingStateChangedEventArgs() { Message = msg, Progress = progress });
         }
 
-        private Button MakeButton(string text, string path, string args)
+        public ImageIconInfo GetImageIconInfo(string path, Image ovrImage = null)
         {
-            var image = IconHelper.GetIcon(path);
-            if (image.Image != null && !image.IsBuiltinImage)
+            ImageIconInfo imInfo;
+
+            if (ovrImage != null)
+                imInfo = IconHelper.InfoFromImage(ovrImage);
+            else
             {
-                var t = IconHelper.ResizeTo(image.Image);
-                image.Image.Dispose();
-                image.Image = t;
+                imInfo = IconHelper.GetIcon(path);
+                if (imInfo.Image != null && !imInfo.IsBuiltinImage)
+                {
+                    var t = IconHelper.ResizeTo(imInfo.Image);
+                    imInfo.Image.Dispose();
+                    imInfo.Image = t;
+                }
             }
+
+            return imInfo;
+        }
+
+        private Button MakeButton(string text, string path, string args, Image ovrImage = null)
+        {
+            var imInfo = GetImageIconInfo(path, ovrImage);
             var b = new SkinnedButton()
             {
                 Text = text,
-                Image = image.Image ?? SkinManager.NoAppIconImage,
+                Image = imInfo.Image ?? SkinManager.NoAppIconImage,
                 Size = addButton.Size,
                 TextImageRelation = TextImageRelation.ImageAboveText,
                 ContextMenuStrip = contextMenuStrip1,
@@ -153,7 +172,8 @@ namespace WiiBrewToolbox
                 {
                     Name = text,
                     Path = path,
-                    Args = args
+                    Args = args,
+                    ImInfo = imInfo
                 }
             };
             b.Click += B_Click;
@@ -246,6 +266,8 @@ namespace WiiBrewToolbox
 
         private void Edit(Button button)
         {
+            var prevEntry = (ItmEntry)button.Tag;
+
             using (var f = new ItemEditor(button))
             {
                 if (f.ShowDialog(this) == DialogResult.OK)
@@ -256,21 +278,20 @@ namespace WiiBrewToolbox
                         return;
                     }
 
-                    button.Text = f.ItmName;
-                    button.Tag = new ItmEntry()
+                    var newEntry = new ItmEntry()
                     {
                         Name = f.ItmName,
                         Path = f.ItmPath,
-                        Args = f.ItmArgs
+                        Args = f.ItmArgs,
+                        ImInfo = prevEntry.ImInfo
                     };
-                    var image = IconHelper.GetIcon(f.ItmPath);
-                    if (image.Image != null && !image.IsBuiltinImage)
-                    {
-                        var t = IconHelper.ResizeTo(image.Image);
-                        image.Image.Dispose();
-                        image.Image = t;
-                    }
-                    button.Image = image.Image ?? SkinManager.NoAppIconImage;
+
+                    button.Text = f.ItmName;
+
+                    if (!prevEntry.ImInfo.IsOverwriteImage)
+                        newEntry.ImInfo = GetImageIconInfo(f.ItmPath);
+
+                    button.Tag = newEntry;
                     SaveEntries();
                 }
             }
@@ -302,5 +323,6 @@ namespace WiiBrewToolbox
         public string Name;
         public string Path;
         public string Args;
+        public ImageIconInfo ImInfo;
     }
 }

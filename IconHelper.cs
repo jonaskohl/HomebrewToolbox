@@ -88,5 +88,14 @@ namespace WiiBrewToolbox
                 return src;
             }
         }
+
+        public static ImageIconInfo InfoFromImage(Image ovrImage)
+        {
+            var i3 = new ImageIconInfo();
+            i3.Image = ovrImage;
+            i3.IsBuiltinImage = false;
+            i3.IsOverwriteImage = true;
+            return i3;
+        }
     }
 }
