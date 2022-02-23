@@ -7,5 +7,6 @@ namespace WiiBrewToolbox
         public Image Image;
         public bool IsBuiltinImage;
         public bool IsOverwriteImage;
+        public string ImagePath;
     }
 }

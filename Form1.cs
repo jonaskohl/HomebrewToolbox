@@ -40,7 +40,8 @@ namespace WiiBrewToolbox
                               "entry",
                               new XAttribute("name", dat.Name),
                               new XAttribute("path", dat.Path),
-                              new XAttribute("args", dat.Args)
+                              new XAttribute("args", dat.Args),
+                              dat.ImInfo.IsOverwriteImage ? new XAttribute("image", dat.ImInfo.ImagePath) : null
                           );
                       })
                 )
@@ -118,12 +119,7 @@ namespace WiiBrewToolbox
                 var name = e.Attribute("name").Value;
                 var path = e.Attribute("path").Value;
                 var args = e.Attribute("args")?.Value ?? "";
-                Image img = null;
-
-                if (e.Attribute("image")?.Value != null)
-                    img = Image.FromFile(e.Attribute("image").Value);
-
-                var b = MakeButton(name, path, args, img);
+                var b = MakeButton(name, path, args, e.Attribute("image")?.Value);
                 flowLayoutPanel1.Controls.Add(b);
                 flowLayoutPanel1.Controls.SetChildIndex(b, flowLayoutPanel1.Controls.Count - 5);
             }
@@ -138,12 +134,12 @@ namespace WiiBrewToolbox
             LoadingStageChanged?.Invoke(this, new LoadingStateChangedEventArgs() { Message = msg, Progress = progress });
         }
 
-        public ImageIconInfo GetImageIconInfo(string path, Image ovrImage = null)
+        public ImageIconInfo GetImageIconInfo(string path, string ovrImagePath = null)
         {
             ImageIconInfo imInfo;
 
-            if (ovrImage != null)
-                imInfo = IconHelper.InfoFromImage(ovrImage);
+            if (ovrImagePath != null)
+                imInfo = IconHelper.InfoFromImage(ovrImagePath);
             else
             {
                 imInfo = IconHelper.GetIcon(path);
@@ -158,9 +154,9 @@ namespace WiiBrewToolbox
             return imInfo;
         }
 
-        private Button MakeButton(string text, string path, string args, Image ovrImage = null)
+        private Button MakeButton(string text, string path, string args, string ovrImagePath = null)
         {
-            var imInfo = GetImageIconInfo(path, ovrImage);
+            var imInfo = GetImageIconInfo(path, ovrImagePath);
             var b = new SkinnedButton()
             {
                 Text = text,
